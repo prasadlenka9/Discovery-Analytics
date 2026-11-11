@@ -1,6 +1,6 @@
-﻿# Discovery Analytics website
+﻿# Discovery Analytics
 
-Standalone React + Vite implementation of the six Figma pages.
+Standalone React and Vite implementation of the six Figma pages.
 
 ## Run locally
 
@@ -11,11 +11,11 @@ npm run dev
 
 ## Pages
 
-- `/` — Home
-- `/about` — About
-- `/services` — Services
-- `/solutions` — Solutions
-- `/careers` — Careers
-- `/contact` — Contact
+- `/` - Home
+- `/about` - About
+- `/services` - Services
+- `/solutions` - Solutions
+- `/careers` - Careers
+- `/contact` - Contact
 
 Original Figma assets are stored in `public/images/discovery/`.
