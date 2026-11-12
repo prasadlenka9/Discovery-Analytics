@@ -1,7 +1,7 @@
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
-  ArrowDown, ArrowRight, ArrowUpRight, Boxes, BriefcaseBusiness,
+  ArrowDown, ArrowRight, ArrowUpRight, Boxes, BriefcaseBusiness, Play,
   Check, ChevronDown, Code2, HeartPulse, Menu, Network, PanelsTopLeft,
   Settings2, X,
 } from 'lucide-react'
@@ -19,8 +19,7 @@ const links = [
 
 function Brand() {
   return <Link to="/" className="da-brand" aria-label="Discovery Analytics home">
-    <img className="da-brand-mark" src="/images/discovery/home/discovery-monogram.svg" alt="" />
-    <span className="da-brand-name"><strong>discovery</strong><small>analytics</small></span>
+    <img className="da-brand-logo" src="/images/discovery/brand/dalogo.png" alt="Discovery Analytics" />
   </Link>
 }
 
@@ -42,11 +41,14 @@ function SiteHeader() {
 function SiteFooter() {
   return <footer className="da-footer">
     <div className="da-footer-main">
-      <div className="da-footer-promise"><Brand /><h2>Technology. Talent.<br />Forward.</h2><p>Human insight. Technology in motion.</p></div>
-      <div className="da-footer-nav"><div><b>EXPLORE</b>{links.slice(0, 4).map(([label, href]) => <Link key={href} to={href}>{label}</Link>)}</div><div><b>CONNECT</b><Link to="/careers">Careers</Link><Link to="/contact">Contact</Link><a href={`mailto:${HR}`}>Email us <ArrowUpRight size={12} /></a></div></div>
+      <div className="da-footer-promise"><Brand /><h2>Technology. Talent.<br />Forward.</h2></div>
+      <div className="da-footer-nav">
+        <div><b>EXPLORE</b>{links.slice(1, 4).map(([label, href]) => <Link key={href} to={href}>{label}</Link>)}</div>
+        <div><b>CONNECT</b><Link to="/careers">Careers ↗</Link><Link to="/contact">Contact <ArrowUpRight size={12}/></Link><a href={`mailto:${HR}`}>Email us ↗</a></div>
+      </div>
     </div>
-    <div className="da-footer-contact"><a href={`mailto:${HR}`}>{HR}</a><span>{PHONE1} &nbsp;·&nbsp; {PHONE2}</span><span>{ADDRESS}</span></div>
-    <div className="da-footer-bottom"><span>© 2026 Discovery Analytics. All rights reserved.</span><span>HUMAN INSIGHT. &nbsp; TECHNOLOGY IN MOTION.</span></div>
+    <div className="da-footer-divider" aria-hidden="true" />
+    <div className="da-footer-bottom"><span>© 2026 Discovery Analytics. All rights reserved.</span><span>HUMAN INSIGHT. TECHNOLOGY IN MOTION.</span><a href="#top">BACK TO TOP ↑</a></div>
   </footer>
 }
 
@@ -56,13 +58,56 @@ function DiscoveryHead({ title, description }: { title: string; description: str
   return <>
     <title>{`${title} | Discovery Analytics`}</title>
     <meta name="description" content={description}/><meta name="author" content="Discovery Analytics"/><meta name="robots" content="index, follow"/>
-    <link rel="canonical" href={pageUrl}/><meta property="og:title" content={`${title} | Discovery Analytics`}/><meta property="og:description" content={description}/><meta property="og:type" content="website"/><meta property="og:url" content={pageUrl}/><meta property="og:image" content={`${ORIGIN}/images/discovery/home/discovery-monogram.svg`}/>
-    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content={`${title} | Discovery Analytics`}/><meta name="twitter:description" content={description}/><meta name="twitter:image" content={`${ORIGIN}/images/discovery/home/discovery-monogram.svg`}/><link rel="icon" href="/images/discovery/home/discovery-monogram.svg" type="image/svg+xml"/>
+    <link rel="canonical" href={pageUrl}/><meta property="og:title" content={`${title} | Discovery Analytics`}/><meta property="og:description" content={description}/><meta property="og:type" content="website"/><meta property="og:url" content={pageUrl}/><meta property="og:image" content={`${ORIGIN}/images/discovery/brand/dalogo.png`}/>
+    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content={`${title} | Discovery Analytics`}/><meta name="twitter:description" content={description}/><meta name="twitter:image" content={`${ORIGIN}/images/discovery/brand/dalogo.png`}/><link rel="icon" href="/images/discovery/brand/Fav.png" type="image/png"/><link rel="apple-touch-icon" href="/images/discovery/brand/Fav.png"/>
   </>
 }
 
+function MotionEffects() {
+  useEffect(() => {
+    const root = document.querySelector<HTMLElement>('.da-site')
+    if (!root || window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return
+
+    const targets = root.querySelectorAll<HTMLElement>(
+      'main > section:not(.da-home-hero), .da-cap-card, .da-service-card, .da-job-card, .da-solution-row',
+    )
+    root.classList.add('da-motion-ready')
+    targets.forEach((target, index) => {
+      target.dataset.reveal = target.tagName === 'SECTION' ? 'section' : 'item'
+      target.style.setProperty('--da-reveal-delay', `${(index % 5) * 70}ms`)
+    })
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return
+        entry.target.classList.add('is-visible')
+        observer.unobserve(entry.target)
+      })
+    }, { threshold: 0.12, rootMargin: '0px 0px -36px 0px' })
+    targets.forEach((target) => observer.observe(target))
+
+    return () => {
+      observer.disconnect()
+      root.classList.remove('da-motion-ready')
+    }
+  }, [])
+
+  return null
+}
+
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useLayoutEffect(() => {
+    window.history.scrollRestoration = 'manual'
+  }, [])
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+  }, [pathname])
+  return null
+}
+
 function PageFrame({ title, description, children }: { title: string; description: string; children: ReactNode }) {
-  return <div className="da-site"><DiscoveryHead title={title} description={description}/><SiteHeader />{children}<SiteFooter /></div>
+  return <div className="da-site" id="top"><MotionEffects/><ScrollToTop/><DiscoveryHead title={title} description={description}/><SiteHeader />{children}<SiteFooter /></div>
 }
 
 function Eyebrow({ children, light = false }: { children: ReactNode; light?: boolean }) {
@@ -73,22 +118,26 @@ function Button({ to = '/contact', children, secondary = false }: { to?: string;
   return <Link className={`da-button${secondary ? ' da-button-outline' : ' da-button-primary'}`} to={to}>{children}<ArrowUpRight size={16} /></Link>
 }
 
-function NetworkStudy() {
-  return <div className="da-network-study" aria-label="Illustration of connected people, processes, and technology">
-    <div className="da-study-caption">FIG. A / CONNECTED INTELLIGENCE</div>
-    <span className="da-study-label da-label-left">HUMAN INSIGHT</span><span className="da-study-label da-label-right">TECHNOLOGY IN MOTION</span>
-    <img className="da-network-layer da-routes" src="/images/discovery/home/signal-routes.svg" alt="" />
-    <img className="da-network-layer da-prism" src="/images/discovery/home/intelligence-prism.svg" alt="" />
-    <img className="da-network-layer da-data-streams" src="/images/discovery/home/data-streams.svg" alt="" />
-    <img className="da-network-layer da-orbital-path" src="/images/discovery/home/orbital-path.png" alt="" />
-    <img className="da-network-layer da-outer-orbit" src="/images/discovery/home/outer-orbit.svg" alt="" />
-    <img className="da-network-layer da-coordinate-grid" src="/images/discovery/home/coordinate-grid.svg" alt="" />
-    <img className="da-network-layer da-network-node da-node-1" src="/images/discovery/home/network-node.svg" alt="" />
-    <img className="da-network-layer da-network-node da-node-2" src="/images/discovery/home/network-node1.svg" alt="" />
-    <img className="da-network-layer da-network-node da-node-3" src="/images/discovery/home/network-node1.svg" alt="" />
-    <img className="da-network-layer da-network-node da-node-4" src="/images/discovery/home/network-node1.svg" alt="" />
-    <img className="da-network-layer da-network-node da-node-5" src="/images/discovery/home/network-node1.svg" alt="" />
-    <div className="da-study-key"><i /> PEOPLE × PROCESS × TECHNOLOGY</div>
+function HeroAnimation() {
+  return <div className="da-hero-animation" role="img" aria-label="Animated visualization connecting people, technology, and business outcomes">
+    <div className="da-animation-heading"><span>DISCOVERY ANALYTICS / SIGNAL MAP</span><span><i /> LIVE SYSTEMS</span></div>
+    <div className="da-animation-stage" aria-hidden="true">
+      <div className="da-animation-orbit da-orbit-main"><i /></div>
+      <div className="da-animation-orbit da-orbit-secondary"><div /></div>
+      <div className="da-animation-orbit da-orbit-tertiary"><i /></div>
+      <svg className="da-animation-paths" viewBox="0 0 560 500" fill="none">
+        <path d="M65 122C135 135 181 185 280 250" />
+        <path d="M495 115C415 143 374 191 280 250" />
+        <path d="M77 376C153 346 205 302 280 250" />
+        <path d="M487 374C408 342 355 298 280 250" />
+      </svg>
+      <div className="da-animation-core"><span className="da-core-orbit"/><span className="da-core-mark">DA</span><strong>CONNECTED</strong><small>INTELLIGENCE</small></div>
+      <div className="da-animation-node da-node-human"><i/><span>HUMAN INSIGHT</span></div>
+      <div className="da-animation-node da-node-technology"><i/><span>TECHNOLOGY</span></div>
+      <div className="da-animation-node da-node-talent"><i/><span>TALENT</span></div>
+      <div className="da-animation-node da-node-strategy"><i/><span>STRATEGY</span></div>
+    </div>
+    <div className="da-animation-legend"><span>01 / PEOPLE</span><span>02 / PROCESS</span><span>03 / TECHNOLOGY</span></div>
   </div>
 }
 
@@ -130,10 +179,31 @@ function SplitHero({ label, title, text, action = 'Discuss your priorities', lis
 }
 
 export function HomePage() {
+  const [videoOpen, setVideoOpen] = useState(false)
+
+  useEffect(() => {
+    if (!videoOpen) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setVideoOpen(false)
+    }
+    window.addEventListener('keydown', closeOnEscape)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [videoOpen])
   return <PageFrame title="Home" description="Connect business, technology and talent with Discovery Analytics.">
     <main>
-      <section className="da-home-hero da-dark-section"><div className="da-wrap da-hero-layout"><div className="da-hero-copy"><Eyebrow light>HUMAN INSIGHT. TECHNOLOGY IN MOTION.</Eyebrow><h1>Complexity,<br />connected.</h1><p>Bring technology, talent and business into alignment. We help you navigate what’s complex — and build what comes next.</p><div className="da-actions"><Button>Let’s talk</Button><Button secondary to="/services">Explore services</Button></div><small>TAILORED SOLUTIONS. LASTING PARTNERSHIPS.</small></div><NetworkStudy /></div><div className="da-capability-ribbon"><div>ONE PARTNER.<br />CONNECTED CAPABILITIES.</div><b>IT services <i>/</i> Human capital <i>/</i> Product development</b><a href="#perspective">DISCOVER MORE ↓</a></div></section>
-      <section className="da-section da-wrap" id="perspective"><Eyebrow>01 / OUR PERSPECTIVE</Eyebrow><div className="da-editorial-grid"><h2>Progress starts with the right connections.</h2><div><p>Discovery Analytics is an emerging global IT services, recruitment and human capital organization. Our work begins with understanding your business — not prescribing a solution.</p><p>We connect strategic advice, technical expertise and the right talent to shape solutions around your challenges.</p><Link to="/about" className="da-text-link">Meet our way of thinking <ArrowUpRight size={14}/></Link></div></div><div className="da-story-visual"><img className="da-story-image" src="/images/discovery/home/material-study-in-alignment.png" alt="A study of layered glass and geometric forms"/><div><Eyebrow>A STUDY IN ALIGNMENT</Eyebrow><h3>Built around your next step.</h3><p>Our vision is to bring complete IT solutions and staff augmentation together, helping organizations move from business challenge to a practical path forward.</p><Link to="/about" className="da-text-link">Learn about us <ArrowUpRight size={14}/></Link></div></div></section>
+      <section className="da-home-hero da-dark-section"><div className="da-wrap da-hero-layout"><div className="da-hero-copy"><Eyebrow light>WELCOME TO DISCOVERY ANALYTICS</Eyebrow><h1>Complexity,<br />connected.</h1><p>Professional technology assistance. Bring technology, talent and business into alignment. We help you navigate what’s complex — and build what comes next.</p><div className="da-actions"><Button>Let’s talk</Button><Button secondary to="/services">Explore services</Button><button className="da-video-trigger" type="button" onClick={() => setVideoOpen(true)}><span><Play size={17} fill="currentColor" /></span>Watch video</button></div><small>TAILORED SOLUTIONS. LASTING PARTNERSHIPS.</small></div><HeroAnimation /></div><div className="da-capability-ribbon"><div>ONE PARTNER.<br />CONNECTED CAPABILITIES.</div><b>IT services <i>/</i> Human capital <i>/</i> Product development</b><a href="#perspective">DISCOVER MORE ↓</a></div></section>
+      {videoOpen && <div className="da-video-backdrop" role="presentation" onClick={(event) => { if (event.target === event.currentTarget) setVideoOpen(false) }}>
+        <div className="da-video-dialog" role="dialog" aria-modal="true" aria-label="Discovery Analytics welcome video">
+          <button className="da-video-close" type="button" aria-label="Close video" autoFocus onClick={() => setVideoOpen(false)}><X size={22}/></button>
+          <iframe src="https://www.youtube-nocookie.com/embed/SUpq7oz1Hxg?autoplay=1" title="Welcome to Discovery Analytics" allow="autoplay; encrypted-media; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen />
+        </div>
+      </div>}
+      <section className="da-section da-wrap" id="perspective"><Eyebrow>01 / OUR PERSPECTIVE</Eyebrow><div className="da-editorial-grid"><h2>Progress starts with the right connections.</h2><div><p>Discovery Analytics is an emerging global IT services, recruitment and human capital organization. Our work begins with understanding your business — not prescribing a solution.</p><p>We connect strategic advice, technical expertise and the right talent to shape solutions around your challenges.</p><Link to="/about" className="da-text-link">Meet our way of thinking <ArrowUpRight size={14}/></Link></div></div><div className="da-story-visual"><img className="da-story-image" src="/images/discovery/generated/aligned-data-artwork.webp" alt="A sculptural study of connected data pathways"/><div><Eyebrow>A STUDY IN ALIGNMENT</Eyebrow><h3>Built around your next step.</h3><p>Our vision is to bring complete IT solutions and staff augmentation together, helping organizations move from business challenge to a practical path forward.</p><Link to="/about" className="da-text-link">Learn about us <ArrowUpRight size={14}/></Link></div></div></section>
       <section className="da-section da-capabilities da-wrap"><Eyebrow>02 / CONNECTED CAPABILITIES</Eyebrow><div className="da-editorial-grid da-section-head"><h2>Built for the challenge.<br />Not the category.</h2><p>From a single application to the people and infrastructure behind it. Explore eight ways we can move your business forward.</p></div><div className="da-cap-grid">{[[capabilities[0],capabilities[1]],[...capabilities.slice(2,5)],[...capabilities.slice(5,8)]].map((row,rowIndex)=><div className={`da-cap-row row-${rowIndex+1}`} key={rowIndex}>{row.map((c)=><CapabilityCard key={c.n} capability={c} large={rowIndex===0}/>)}</div>)}</div><p className="da-not-sure">Not sure where to begin? <Link to="/contact">Start with the challenge <ArrowUpRight size={14}/></Link></p></section>
       <Process title={<>Less fragmentation.<br />More forward motion.</>} label="03 / FROM CHALLENGE TO SOLUTION" />
       <section className="da-section da-dark-section da-product-section"><div className="da-wrap"><Eyebrow light>SOFTWARE / E2</Eyebrow><div className="da-editorial-grid da-section-head"><h2>Focused tools.<br />Connected thinking.</h2><p>Explore our E2 software offerings as a starting point. We’ll map your requirements and integration needs before recommending a fit.</p></div><div className="da-product-card"><div><small>E2 / 01</small><h3>Time Tracker</h3><p>Make time part of the bigger picture. Explore requirements, existing processes and the connections your organization needs.</p><Button>Discuss Time Tracker</Button></div><div className="da-time-study"><span>WORKFLOW TO EXPLORE</span><div>Capture <i>→</i> Review <i>→</i> Report</div><small>YOUR PEOPLE + YOUR PROCESSES + YOUR SYSTEMS</small></div></div><div className="da-product-list"><details><summary><span>E2 / 02</span><b>E-Recruit</b><small>Recruitment workflows</small><span>+</span></summary><p>Discuss your recruitment process, the information your team needs and the way an E-Recruit offering might fit your existing environment.</p><a href={`mailto:${HR}?subject=E-Recruit`}>Discuss E-Recruit <ArrowUpRight size={13}/></a></details><details><summary><span>E2 / 03</span><b>E-Invoice</b><small>Invoicing workflows</small><span>+</span></summary><p>Explore invoicing requirements, business processes and integration needs before assessing an E-Invoice fit.</p><a href={`mailto:${HR}?subject=E-Invoice`}>Discuss E-Invoice <ArrowUpRight size={13}/></a></details></div></div></section>
@@ -147,10 +217,10 @@ export function HomePage() {
 
 export function AboutPage() {
   return <PageFrame title="About" description="Meet Discovery Analytics and learn how we connect technology, people, and business.">
-    <main><SplitHero label="ABOUT / DISCOVERY ANALYTICS" title={<>Progress starts with<br className="desktop-only"/> the right connections.</>} text="We’re an emerging global human capital, recruitment and IT services organization. Tailored solutions and lasting partnerships are at the heart of our work." action="Meet your next partner" visual={<img className="da-subhero-image" src="/images/discovery/about/material-study-in-alignment.png" alt="A study of transparent glass and geometric forms"/>} />
+    <main><SplitHero label="ABOUT / DISCOVERY ANALYTICS" title={<>Progress starts with<br className="desktop-only"/> the right connections.</>} text="We’re an emerging global human capital, recruitment and IT services organization. Tailored solutions and lasting partnerships are at the heart of our work." action="Meet your next partner" visual={<img className="da-subhero-image" src="/images/discovery/generated/team-collaboration.webp" alt="Three colleagues collaborating around a shared technology challenge"/>} />
       <section className="da-section da-wrap"><Eyebrow>01 / OVERVIEW</Eyebrow><div className="da-editorial-grid da-section-head"><h2>Business understanding.<br/>Technical perspective.</h2><div><p>Our consultants combine technical and business knowledge, working closely with each client to analyze challenges and shape practical advice.</p><p>Our work spans product development, product support, printing outsourcing and staffing. We connect the right disciplines around the needs of the organization, rather than treating each challenge in isolation.</p><p>Staff augmentation supports specific assignments and periods of peak demand, bringing qualified IT personnel into collaboration with existing internal teams.</p><Link to="/services" className="da-text-link">Explore our services <ArrowUpRight size={14}/></Link></div></div><div className="da-overview-grid">{[['Product development','From understanding the business challenge to shaping and building software.'],['Product support','Technical knowledge and close collaboration throughout an application’s life.'],['Printing outsourcing','Outsourced printing support considered alongside your operational needs.'],['Staffing','Technically qualified, customer-centric IT personnel to augment internal teams.']].map(([t,d])=><article key={t}><span>CAPABILITY / {t.toUpperCase()}</span><h3>{t}</h3><p>{d}</p></article>)}</div></section>
       <section className="da-section da-dark-section"><div className="da-wrap"><Eyebrow light>02 / VISION</Eyebrow><div className="da-editorial-grid da-section-head"><h2>Complete solutions.<br/>Shared responsibility.</h2><p>Our vision is to provide complete IT solutions and staff augmentation, with a commitment to quality, on-time delivery and work that respects the client’s budget.</p></div><div className="da-value-grid">{[['01','Understand','Understand the business before recommending a solution.'],['02','Innovate','Bring innovation and creativity to practical delivery.'],['03','Grow','Encourage professional growth and effective teamwork.'],['04','Commit','Uphold ethics, quality and commitment in every relationship.']].map(([n,t,d])=><article key={n}><span>{n}</span><h3>{t}</h3><p>{d}</p></article>)}</div></div></section>
-      <section className="da-section da-wrap"><Eyebrow>03 / CULTURE</Eyebrow><div className="da-editorial-grid da-section-head"><h2>Different disciplines.<br/>Shared purpose.</h2><p>We believe our entire team shares responsibility for equity and inclusion. Quality and human values are inseparable from the way we work.</p></div><div className="da-collab-study"><div className="da-collab-orbit"><span>Your challenge</span><span>Talent</span><strong>Business</strong><span>Technology</span><span>Collaboration</span></div><div className="da-values"><p><b>Equity and inclusion</b><br/>We respect global communities and make room for authentic perspectives.</p><p><b>Learning and growth</b><br/>Innovation, creativity and personal development belong in everyday work.</p><p><b>Quality and human values</b><br/>We respect employees, vendors and customers, and how we work together.</p></div></div></section>
+      <section className="da-section da-wrap"><Eyebrow>03 / CULTURE</Eyebrow><div className="da-editorial-grid da-section-head"><h2>Different disciplines.<br/>Shared purpose.</h2><p>We believe our entire team shares responsibility for equity and inclusion. Quality and human values are inseparable from the way we work.</p></div><div className="da-collab-study"><div className="da-culture-photo"><img src="/images/discovery/generated/culture-collaboration.webp" alt="A diverse team sharing ideas around a table" loading="lazy" /></div><div className="da-values"><p><b>Equity and inclusion</b><br/>We respect global communities and make room for authentic perspectives.</p><p><b>Learning and growth</b><br/>Innovation, creativity and personal development belong in everyday work.</p><p><b>Quality and human values</b><br/>We respect employees, vendors and customers, and how we work together.</p></div></div></section>
       <section className="da-section da-light-band"><div className="da-wrap"><Eyebrow>04 / CONTINUED LEARNING</Eyebrow><div className="da-editorial-grid da-section-head"><h2>A culture that keeps learning.</h2><p>Our specialized training efforts focus on challenging technology domains, supporting personal and professional growth alongside the work.</p></div><div className="da-topic-chips">{['Software engineering','Networking and operating systems','Client-server technologies','Database administration (DBA)','Web technologies','Mobile computing'].map(x=><span key={x}>{x}<ArrowRight size={13}/></span>)}</div><Link to="/careers" className="da-text-link">Explore careers at Discovery <ArrowUpRight size={14}/></Link></div></section>
       <div className="da-wrap"><Partnership title="Build a lasting partnership." text="Bring us your business challenge, talent needs or technology priorities. Let’s explore what the right connections can make possible." /></div>
     </main>
@@ -158,7 +228,7 @@ export function AboutPage() {
 }
 
 const services = [
-  { n:'01', verb:'ALIGN / ENTERPRISE', title:'Business', summary:'Align enterprise IT assets with the way your business operates. We start with the business context and consider how technology can support a more connected organization.', bullets:['Enterprise IT asset alignment','Business and technical requirements','Connections across people, processes and systems'], image:'briefcase-business.svg', tone:'dark', link:'Discuss business' },
+  { n:'01', verb:'ALIGN / ENTERPRISE', title:'Business', summary:'Align enterprise IT assets with the way your business operates. We start with the business context and consider how technology can support a more connected organization.', bullets:['Enterprise IT asset alignment','Business and technical requirements','Connections across people, processes and systems'], image:'briefcase-business.svg', tone:'light', link:'Discuss business' },
   { n:'02', verb:'CONNECT / COLLABORATE', title:'E-Business', summary:'Support collaboration through open communication and connected business processes. Our focus is the technology behind shorter response times and more effective ways of working.', bullets:['Collaboration and open communications','Connected digital business processes','Response-time and workflow considerations'], image:'workflow.svg', tone:'lavender', link:'Discuss e-business' },
   { n:'03', verb:'SUPPORT / CARE', title:'Health Care', summary:'Bring business and technology perspectives to healthcare management systems. We work with organizations to understand the applications and information needs behind their operations.', bullets:['Healthcare management systems','Application and operational requirements','Technical collaboration with client teams'], image:'heart-pulse.svg', tone:'mint', link:'Discuss health care' },
   { n:'04', verb:'MANAGE / EVOLVE', title:'Maintenance services', summary:'Application management begins with understanding the whole portfolio. We help frame maintenance requirements alongside portfolio strategy, cost considerations and IT investment decisions.', bullets:['Application management and maintenance','Application portfolio strategy','Maintenance costs and IT investment decisions'], image:'settings2.svg', tone:'soft', link:'Discuss maintenance services' },
@@ -187,7 +257,7 @@ const solutionAreas = [
 
 export function SolutionsPage() {
   return <PageFrame title="Solutions" description="A practical set of connected technology solutions for business systems and infrastructure.">
-    <main><section className="da-subhero da-dark-section"><div className="da-wrap da-solutions-hero"><div><Eyebrow light>SOLUTIONS / DISCOVERY ANALYTICS</Eyebrow><h1>Less fragmentation.<br/>More forward<br/>motion.</h1><p>Good solutions connect more than systems. They connect business goals, people and a clear way to deliver — from applications to the infrastructure behind them.</p><Button>Explore your requirements</Button></div><div className="da-solution-index"><Eyebrow light>SOLUTION AREAS</Eyebrow>{[...solutionAreas.map(x=>[x.n,x.title]),['06','E2 Tips']].map(([n,t])=><a key={n} href={`#solution-${n}`}><span>{n}</span>{t}<ArrowDown size={14}/></a>)}</div></div></section>
+    <main><section className="da-subhero da-dark-section"><div className="da-wrap da-solutions-hero"><div><Eyebrow light>SOLUTIONS / DISCOVERY ANALYTICS</Eyebrow><h1>Less fragmentation.<br/>More forward<br/>motion.</h1><p>Good solutions connect more than systems. They connect business goals, people and a clear way to deliver — from applications to the infrastructure behind them.</p><Button>Explore your requirements</Button></div><div className="da-solution-index da-has-image"><img className="da-solution-index-image" src="/images/discovery/generated/connected-infrastructure.webp" alt="" aria-hidden="true"/><Eyebrow light>SOLUTION AREAS</Eyebrow>{[...solutionAreas.map(x=>[x.n,x.title]),['06','E2 Tips']].map(([n,t])=><a key={n} href={`#solution-${n}`}><span>{n}</span>{t}<ArrowDown size={14}/></a>)}</div></div></section>
       <section className="da-section da-wrap"><Eyebrow>CONNECTED SOLUTIONS / BUSINESS TO INFRASTRUCTURE</Eyebrow>{solutionAreas.map(s=><article className="da-solution-row" id={`solution-${s.n}`} key={s.n}><div><Eyebrow>{s.n} / SOLUTION</Eyebrow><h2>{s.title}</h2><p>{s.summary}</p><a className="da-text-link" href={`mailto:${HR}?subject=${encodeURIComponent(s.title)}`}>Discuss {s.title.toLowerCase()} <ArrowUpRight size={13}/></a></div><div className="da-solution-panel"><span>{s.steps}</span><ul>{s.items.map(x=><li key={x}><Check size={13}/>{x}</li>)}</ul></div></article>)}</section>
       <section className="da-section da-dark-section"><div className="da-wrap"><Eyebrow light>06 / E2 TIPS</Eyebrow><div className="da-editorial-grid da-section-head"><h2>Focused tools.<br/>Connected thinking.</h2><p>Explore our E2 software offerings as a starting point. We’ll map your requirements and integration needs before recommending a fit.</p></div><div className="da-product-list da-e2-list"><details id="solution-06" open><summary><span>E2 / 01</span><b>Time Tracker</b><small>TIME WORKFLOWS</small><ChevronDown size={16}/></summary><p>Make time part of the bigger picture. Start a conversation about time tracking that fits your team. Together, we can explore requirements, existing processes and the connections your organization needs.</p><a href={`mailto:${HR}?subject=Time%20Tracker`}>Discuss Time Tracker <ArrowUpRight size={13}/></a><div className="da-time-study"><span>WORKFLOW TO EXPLORE</span><div>Capture <i>→</i> Review <i>→</i> Report</div><small>YOUR PEOPLE + YOUR PROCESSES + YOUR SYSTEMS</small></div></details><details><summary><span>E2 / 02</span><b>E-Recruit</b><small>RECRUITMENT WORKFLOWS</small><ChevronDown size={16}/></summary><p>Discuss your recruitment process, the information your team needs and the way an E-Recruit offering might fit your existing environment.</p><a href={`mailto:${HR}?subject=E-Recruit`}>Discuss E-Recruit <ArrowUpRight size={13}/></a></details><details><summary><span>E2 / 03</span><b>E-Invoice</b><small>INVOICING WORKFLOWS</small><ChevronDown size={16}/></summary><p>Explore invoicing requirements, business processes and integration needs before assessing an E-Invoice fit.</p><a href={`mailto:${HR}?subject=E-Invoice`}>Discuss E-Invoice <ArrowUpRight size={13}/></a></details></div><p className="da-fine-print">These are workflow discussion areas, not a demonstration of product features. We’ll confirm suitability and scope with you.</p></div></section>
       <Process/><div className="da-contact-cta da-dark-section"><div className="da-wrap"><div><Eyebrow light>THE START OF A GOOD PARTNERSHIP</Eyebrow><h2>Connect the pieces that matter.</h2><p>Tell us about your applications, infrastructure or workflows. We’ll explore the requirements before recommending a solution.</p></div><Button>Start a conversation</Button></div></div>

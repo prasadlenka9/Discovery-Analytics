@@ -109,3 +109,132 @@
   .da-nav-links.is-open>a:not(.da-button){padding:13px 0;border-bottom:1px solid #344154}
   .da-nav-links.is-open .da-nav-cta{margin:16px 0 0}
 }
+
+/* Restrained motion for depth and scroll guidance. */
+.da-site.da-motion-ready [data-reveal='section']{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--da-reveal-delay,0ms)}
+.da-site.da-motion-ready [data-reveal='item']{opacity:0;transition:opacity .55s ease;transition-delay:var(--da-reveal-delay,0ms)}
+.da-site.da-motion-ready [data-reveal].is-visible{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.da-site *, .da-site *::before,.da-site *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.da-site.da-motion-ready [data-reveal]{opacity:1!important;transform:none!important}}
+
+/* Footer sizing and rhythm aligned with the Figma desktop and mobile frames. */
+.da-footer{display:flex;flex-direction:column;gap:48px;padding:64px max(64px,calc((100vw - 1312px)/2)) 32px;background:#f7f8fa}
+.da-footer-main{display:flex;align-items:flex-start;justify-content:space-between;gap:48px;padding:0}
+.da-footer-promise{width:min(560px,48%);display:flex;flex-direction:column;align-items:flex-start;gap:24px}
+.da-footer-promise h2{margin:0;font-size:48px;line-height:1.1;font-weight:500;letter-spacing:-.04em;color:var(--ink)}
+.da-footer-nav{display:flex;grid-template-columns:none;gap:72px}
+.da-footer-nav>div{gap:16px}
+.da-footer-nav b{font:10px/1.4 var(--mono);color:var(--muted);margin:0 0 0}
+.da-footer-nav a{font-size:14px;line-height:1.4;color:var(--ink)}
+.da-footer-nav>div:last-child a:last-child{color:var(--teal-dark)}
+.da-footer-divider{height:1px;width:100%;background:#d9dfe7}
+.da-footer-bottom{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:0;border:0;font:inherit;letter-spacing:normal}
+.da-footer-bottom span:first-child{font:11px/1.4 var(--sans);color:var(--muted)}
+.da-footer-bottom span:nth-child(2){font:9px/1.4 var(--mono);color:var(--muted)}
+.da-footer-bottom a{font:10px/1.4 var(--mono);color:var(--teal-dark)}
+@media(min-width:701px) and (max-width:1000px){
+  .da-footer{padding:52px 40px 28px;gap:38px}
+  .da-footer-promise{width:45%}
+  .da-footer-promise h2{font-size:40px}
+  .da-footer-nav{gap:38px}
+}
+@media(max-width:700px){
+  .da-footer{padding:48px 24px 32px;gap:32px}
+  .da-footer-main{flex-direction:column;gap:32px}
+  .da-footer-promise{width:100%;gap:24px}
+  .da-footer-promise h2{font-size:34px;line-height:1.1}
+  .da-footer-nav{width:100%;justify-content:space-between;gap:18px}
+  .da-footer-nav>div{gap:16px}
+  .da-footer-nav b{font-size:10px}
+  .da-footer-nav a{font-size:14px}
+  .da-footer-bottom{flex-direction:column;gap:16px}
+  .da-footer-bottom span:first-child{font-size:11px}
+  .da-footer-bottom span:nth-child(2){font-size:9px}
+  .da-footer-bottom a{display:none}
+}
+
+/* New code-built Home animation. Original Figma image assets remain untouched. */
+.da-hero-animation{height:550px;position:relative;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 52% 48%,#18364a 0,#101e30 46%,#101828 78%);border:1px solid #344154}
+.da-hero-animation:before{content:"";position:absolute;inset:0;z-index:0;background-image:linear-gradient(#dce9f50b 1px,transparent 1px),linear-gradient(90deg,#dce9f50b 1px,transparent 1px);background-size:38px 38px;mask-image:radial-gradient(ellipse at center,#000 0,transparent 78%)}
+.da-hero-animation:after{content:"";position:absolute;z-index:3;top:-20%;bottom:-20%;left:-40%;width:24%;pointer-events:none;background:linear-gradient(100deg,transparent,rgba(0,214,201,.2),rgba(255,255,255,.5),transparent);filter:blur(8px);transform:skewX(-18deg);animation:da-signal-sweep 6.8s ease-in-out infinite}
+.da-animation-heading,.da-animation-legend{position:absolute;z-index:4;left:24px;right:24px;display:flex;align-items:center;justify-content:space-between;color:#aab6c7;font:9px/1.5 var(--mono);letter-spacing:.08em}
+.da-animation-heading{top:20px}.da-animation-heading span:last-child{display:flex;align-items:center;gap:7px;color:#00d6c9}.da-animation-heading i{width:6px;height:6px;border-radius:50%;background:#00d6c9;box-shadow:0 0 12px #00d6c9;animation:da-live-pulse 1.7s ease-in-out infinite}
+.da-animation-legend{bottom:20px;color:#718199}.da-animation-stage{position:absolute;inset:48px 0;z-index:1}
+.da-animation-orbit{position:absolute;left:50%;top:50%;width:min(84%,430px);aspect-ratio:1;border:1px solid #00d6c933;border-radius:50%;transform:translate(-50%,-50%);animation:da-orbit 34s linear infinite}
+.da-orbit-main i,.da-orbit-tertiary i{position:absolute;left:50%;top:-5px;width:10px;height:10px;border:2px solid #101828;border-radius:50%;background:#00d6c9;box-shadow:0 0 14px 3px #00d6c988}
+.da-orbit-secondary{width:min(68%,350px);border-color:#cad8e522;animation-duration:24s;animation-direction:reverse}
+.da-orbit-secondary div{position:absolute;inset:28% -3%;border:1px solid #00d6c944;border-radius:50%;transform:rotate(-34deg)}
+.da-orbit-tertiary{width:min(52%,270px);border-style:dashed;border-color:#00d6c922;animation-duration:46s}
+.da-orbit-tertiary i{left:auto;top:50%;right:-5px;background:#f6b86b;box-shadow:0 0 14px 3px #f6b86b77}
+.da-animation-paths{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.da-animation-paths path{stroke:#00d6c95c;stroke-width:1.4;stroke-dasharray:5 9;animation:da-path-flow 5s linear infinite}
+.da-animation-paths path:nth-child(2){animation-delay:-1.2s}.da-animation-paths path:nth-child(3){animation-delay:-2.4s}.da-animation-paths path:nth-child(4){animation-delay:-3.6s}
+.da-animation-core{position:absolute;left:50%;top:50%;width:180px;height:180px;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid #00d6c966;border-radius:50%;background:radial-gradient(circle at 50% 40%,#214557 0,#152b3b 48%,#101828 74%);box-shadow:0 0 42px #00d6c933,inset 0 0 32px #00d6c91f;animation:da-core-breathe 4s ease-in-out infinite}
+.da-core-orbit{position:absolute;inset:-12px;border:1px solid #00d6c944;border-top-color:#00d6c9;border-radius:50%;animation:da-orbit 8s linear infinite}
+.da-core-mark{color:#fff;font:500 34px/1 var(--sans);letter-spacing:-.08em}.da-animation-core strong{margin-top:14px;color:#fff;font:600 10px/1.4 var(--mono);letter-spacing:.16em}.da-animation-core small{margin-top:3px;color:#00d6c9;font:9px/1.4 var(--mono);letter-spacing:.18em}
+.da-animation-node{position:absolute;z-index:2;display:flex;align-items:center;gap:9px;color:#dce5f0;font:9px/1.4 var(--mono);letter-spacing:.08em;white-space:nowrap}
+.da-animation-node i{width:7px;height:7px;border-radius:50%;background:#00d6c9;box-shadow:0 0 14px #00d6c9;animation:da-live-pulse 2.2s ease-in-out infinite}
+.da-node-human{left:10%;top:16%}.da-node-technology{right:8%;top:20%}.da-node-talent{left:10%;bottom:17%}.da-node-strategy{right:9%;bottom:16%}.da-node-technology i{animation-delay:.5s}.da-node-talent i{animation-delay:1s}.da-node-strategy i{animation-delay:1.5s}
+@keyframes da-orbit{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes da-path-flow{to{stroke-dashoffset:-56}}
+@keyframes da-core-breathe{0%,100%{box-shadow:0 0 32px #00d6c922,inset 0 0 24px #00d6c91a}50%{box-shadow:0 0 58px #00d6c955,inset 0 0 38px #00d6c933}}
+@keyframes da-live-pulse{0%,100%{opacity:.55;scale:.82}50%{opacity:1;scale:1.22}}
+@keyframes da-signal-sweep{0%,18%{left:-40%;opacity:0}35%{opacity:.9}67%{opacity:.65}85%,100%{left:120%;opacity:0}}
+@media(max-width:1000px){.da-hero-animation{height:460px}}
+@media(max-width:700px){.da-hero-animation{height:330px}.da-animation-heading,.da-animation-legend{left:14px;right:14px;font-size:7px}.da-animation-heading{top:13px}.da-animation-legend{bottom:13px}.da-animation-stage{inset:38px 0}.da-animation-core{width:130px;height:130px}.da-core-mark{font-size:27px}.da-animation-core strong{font-size:8px;margin-top:10px}.da-animation-core small{font-size:7px}.da-animation-node{font-size:7px;gap:5px}.da-node-human{left:5%;top:14%}.da-node-technology{right:3%;top:18%}.da-node-talent{left:5%;bottom:14%}.da-node-strategy{right:4%;bottom:13%}.da-animation-orbit{width:89%}.da-orbit-secondary{width:73%}.da-orbit-tertiary{width:55%}}
+@media(prefers-reduced-motion:reduce){.da-hero-animation:after,.da-animation-orbit,.da-animation-paths path,.da-animation-core,.da-core-orbit,.da-animation-heading i,.da-animation-node i{animation:none!important;filter:none!important}.da-hero-copy,.da-hero-animation{animation:none!important;opacity:1!important;transform:none!important}}
+
+/* Use the live application's original Discovery Analytics logo in both brand positions. */
+.da-brand{gap:0}
+.da-brand-logo{display:block;width:auto;height:70px;max-width:min(100%,220px);object-fit:contain}
+@media(max-width:700px){.da-brand-logo{height:56px}}
+
+/* Keep primary navigation visible while any Discovery page scrolls. */
+.da-site{padding-top:104px}
+.da-header{position:fixed;inset:0 0 auto;width:100%;z-index:1000}
+@media(max-width:700px){.da-site{padding-top:84px}}
+
+/* Motion for the capability illustrations in section 02. */
+.da-capabilities .da-card-art img{transform-origin:center;backface-visibility:hidden;filter:drop-shadow(0 5px 12px #10182818);animation:da-capability-drift 5.8s ease-in-out infinite}
+.da-capabilities .row-1 .da-cap-card:nth-child(2) .da-card-art img{animation-delay:-2.2s}
+.da-capabilities .row-2 .da-cap-card:nth-child(2) .da-card-art img{animation-delay:-1.35s}
+.da-capabilities .row-2 .da-cap-card:nth-child(3) .da-card-art img{animation-delay:-3.1s}
+.da-capabilities .row-3 .da-cap-card:nth-child(2) .da-card-art img{animation-delay:-2.6s}
+.da-capabilities .row-3 .da-cap-card:nth-child(3) .da-card-art img{animation-delay:-.85s}
+@keyframes da-capability-drift{0%,100%{transform:translate3d(0,0,0) rotate(0) scale(1)}50%{transform:translate3d(0,-7px,0) rotate(-1.5deg) scale(1.035)}}
+
+/* The collaboration map in section 05 gets a slow orbit and signal glow. */
+.da-collab-lines{transform-origin:center;animation:da-connection-glow 5.2s ease-in-out infinite}
+.da-collab-focus{transform-origin:center;animation:da-focus-orbit 32s linear infinite}
+@keyframes da-connection-glow{0%,100%{opacity:.68;filter:drop-shadow(0 0 0 #00d6c900)}50%{opacity:1;filter:drop-shadow(0 0 9px #00d6c933)}}
+@keyframes da-focus-orbit{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.da-capabilities .da-card-art img,.da-collab-lines,.da-collab-focus{animation:none!important;filter:none!important;transform:none!important}}
+
+/* Improve wordmark contrast in the fixed header; footer keeps its existing treatment. */
+.da-header .da-brand{padding:4px 10px;border-radius:3px;background:#fff}
+.da-header .da-brand-logo{height:62px}
+@media(max-width:700px){.da-header .da-brand{padding:3px 8px}.da-header .da-brand-logo{height:52px}}
+
+/* Replace the unrelated culture diagram with a relevant team photograph. */
+.da-culture-photo{height:330px;overflow:hidden;border-radius:3px;background:#172437}
+.da-culture-photo img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* Keep the Solutions area index readable over its new infrastructure artwork. */
+.da-solution-index.da-has-image{position:relative;isolation:isolate;overflow:hidden;background:#101828}
+.da-solution-index-image{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;object-fit:cover;opacity:.6}
+.da-solution-index.da-has-image:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(105deg,#101828ed,#10182899 78%,#101828d9);pointer-events:none}
+.da-solution-index.da-has-image>:not(.da-solution-index-image){position:relative;z-index:2}
+@media(max-width:1000px){.da-culture-photo{height:260px}}
+@media(max-width:700px){.da-culture-photo{height:220px}}
+
+/* Welcome video action and responsive YouTube dialog. */
+.da-actions{flex-wrap:wrap}
+.da-video-trigger{display:inline-flex;align-items:center;gap:10px;padding:0;border:0;background:transparent;color:#fff;font:600 14px/1.4 var(--sans);cursor:pointer}
+.da-video-trigger>span{width:46px;height:46px;display:grid;place-items:center;border:1px solid #00d6c9;border-radius:50%;color:#00d6c9;transition:background .2s,color .2s,transform .2s}
+.da-video-trigger:hover>span{background:#00d6c9;color:#101828;transform:scale(1.06)}
+.da-video-backdrop{position:fixed;z-index:1200;inset:0;display:grid;place-items:center;padding:24px;background:#050b16e8;backdrop-filter:blur(8px)}
+.da-video-dialog{position:relative;width:min(100%,1000px);aspect-ratio:16/9;background:#000;box-shadow:0 24px 90px #0008}
+.da-video-dialog iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.da-video-close{position:absolute;z-index:2;top:-48px;right:0;width:40px;height:40px;display:grid;place-items:center;border:1px solid #ffffff55;border-radius:50%;background:#101828;color:#fff;cursor:pointer}
+.da-video-close:hover{background:#26364d}
+@media(max-width:700px){.da-video-backdrop{padding:16px}.da-video-dialog{width:100%}.da-video-trigger{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.da-video-trigger>span{transition:none}}
